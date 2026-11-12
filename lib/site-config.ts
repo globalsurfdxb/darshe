@@ -8,8 +8,7 @@ export const siteConfig = {
   name: "DarShe",
   tagline: "Her Home, Her Haven.",
 
-  // TODO: confirm the real public contact email. Also set DARSHE_EMAIL in the
-  // environment: that is where enquiry notifications are delivered.
+  // TODO: confirm the real public contact email (shown in the footer and on the survey error message).
   email: "hello@darshe.ae",
 
   // TODO: confirm the real phone / WhatsApp number.
@@ -17,9 +16,6 @@ export const siteConfig = {
 
   // TODO: confirm the real street address. The footer renders "{address}, Dubai, UAE".
   address: "Address to be confirmed",
-
-  // TODO: confirm the real response-time commitment shown in "What happens next".
-  responseTime: "24 hours",
 
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 } as const;

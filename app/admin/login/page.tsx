@@ -13,7 +13,7 @@ export default async function LoginPage({
       <div className="w-full max-w-md rounded-3xl border border-line bg-card p-8 sm:p-10">
         <Logo />
         <h1 className="mt-8 text-3xl">Team sign-in</h1>
-        <p className="mt-2 text-body-muted">Enter the admin password to view enquiries.</p>
+        <p className="mt-2 text-body-muted">Enter the admin password to view survey responses.</p>
         <LoginForm next={typeof next === "string" ? next : ""} />
       </div>
     </main>

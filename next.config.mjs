@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    // The admin used to have an Enquiries section; send old bookmarks to the survey.
+    return [{ source: "/admin/enquiries/:path*", destination: "/admin/survey", permanent: false }];
+  },
   async headers() {
     return [
       {

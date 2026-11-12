@@ -2,17 +2,24 @@ import { isAdmin } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { csvCell, formatDubai } from "@/lib/format";
 import { ALL_QUESTIONS, formatAnswer } from "@/lib/survey";
-import { answersOf } from "@/lib/survey-queries";
+import { answersOf, applySurveyFilters, parseSurveyFilters } from "@/lib/survey-queries";
 
 export const dynamic = "force-dynamic";
 
-/** One row per response, one column per question. Multi-select answers are joined with "; ". */
-export async function GET() {
+/**
+ * One row per response, one column per question. Multi-select answers are
+ * joined with "; ". Honours the same filters as the list page.
+ */
+export async function GET(request: Request) {
   if (!(await isAdmin())) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const rows = await db.surveyResponse.findMany({ orderBy: { createdAt: "desc" } });
+  const params = Object.fromEntries(new URL(request.url).searchParams);
+  const filters = parseSurveyFilters(params);
+
+  const all = await db.surveyResponse.findMany({ orderBy: { createdAt: "desc" } });
+  const rows = applySurveyFilters(all, filters);
 
   const header = [
     "Response ID",

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 import { requireAdmin } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { formatDubai, whatsappUrl } from "@/lib/format";
 import { SURVEY_SECTIONS, formatAnswer } from "@/lib/survey";
 import { answersOf } from "@/lib/survey-queries";
+import { deleteSurveyResponse } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -25,11 +27,20 @@ export default async function SurveyResponsePage({ params }: { params: Promise<{
         ← All responses
       </Link>
 
-      <h1 className="mt-4 text-3xl sm:text-4xl">Survey response</h1>
-      <p className="mt-2 text-body-muted">
-        Received {formatDubai(response.createdAt)} (Dubai time)
-        {response.source ? ` · source: ${response.source}` : ""}
-      </p>
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl">Survey response</h1>
+          <p className="mt-2 text-body-muted">
+            Received {formatDubai(response.createdAt)} (Dubai time)
+            {response.source ? ` · source: ${response.source}` : ""}
+          </p>
+        </div>
+        <DeleteButton
+          action={deleteSurveyResponse.bind(null, response.id)}
+          itemLabel="this survey response"
+          redirectTo="/admin/survey"
+        />
+      </div>
 
       <div className="mt-8 space-y-6">
         {SURVEY_SECTIONS.map((section) => (

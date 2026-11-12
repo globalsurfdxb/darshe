@@ -8,7 +8,7 @@ import { ALL_QUESTIONS, CONTACT, pickAnswers, validateQuestions } from "@/lib/su
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Higher than the enquiry limit: several women may share one office or home network.
+// Fairly generous: several women may share one office or home network.
 const MAX_PER_HOUR = 10;
 const ONE_HOUR_MS = 60 * 60 * 1000;
 const MAX_BODY_BYTES = 30_000;

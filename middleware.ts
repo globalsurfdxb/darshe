@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   if (isLogin) {
     // Already signed in: skip the login page.
     response = authed
-      ? NextResponse.redirect(new URL("/admin/enquiries", request.url))
+      ? NextResponse.redirect(new URL("/admin/survey", request.url))
       : NextResponse.next();
   } else if (!authed) {
     const url = new URL("/admin/login", request.url);

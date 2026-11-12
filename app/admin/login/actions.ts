@@ -13,7 +13,7 @@ function safeNext(value: FormDataEntryValue | null): string {
   const v = typeof value === "string" ? value : "";
   return v.startsWith("/admin") && !v.startsWith("//") && !v.startsWith("/admin/login")
     ? v
-    : "/admin/enquiries";
+    : "/admin/survey";
 }
 
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {

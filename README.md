@@ -2,12 +2,12 @@
 
 Landing page, housing survey and admin for **DarShe**, a women-only co-living residence for working women in Dubai.
 
-- **Landing page** at `/`: single page. Its "Register your interest" buttons link to the survey.
+- **Landing page** at `/`: single page. Its "Take the survey" buttons link to the survey.
 - **Survey** at `/survey`: the 34-question Women's Housing Survey as a 7-step form (one section per step).
-- **API**: `POST /api/survey` saves survey responses; `POST /api/enquiries` saves simple enquiries (no form uses it at the moment).
-- **Admin** at `/admin`: password-protected. **Survey** tab: responses list, detail, CSV export. **Enquiries** tab: list, search, filters, status, CSV export.
+- **API**: `POST /api/survey` validates, rate-limits and saves a response.
+- **Admin** at `/admin/survey` (password-protected): responses list with search and filters, detail view, delete, CSV export.
 
-Stack: Next.js 15 (App Router) · TypeScript · Tailwind CSS 3 · Prisma 6 · Zod 4 · jose (session cookie) · SQLite locally, PostgreSQL in production.
+Stack: Next.js 15 (App Router) · TypeScript · Tailwind CSS 3 · GSAP · Prisma 6 · Zod 4 · jose (session cookie) · SQLite locally, PostgreSQL in production.
 
 ## Folder structure
 
@@ -18,26 +18,23 @@ app/
   icon.svg                      Favicon (arch logo)
   survey/page.tsx               Survey page (/survey)
   api/survey/route.ts           Survey endpoint
-  api/enquiries/route.ts        Enquiry endpoint
   admin/login/                  Login page + server actions
-  admin/(panel)/survey/         Survey responses: list, detail ([id]), CSV export
-  admin/(panel)/enquiries/      Enquiries: list, detail ([id]), CSV export
+  admin/(panel)/survey/         Responses: list, detail ([id]), delete, CSV export
 components/
-  landing/                      One component per landing section
+  landing/                      One component per landing section (+ GSAP animations)
   survey/SurveyForm.tsx         Multi-step survey form
-  admin/                        Admin UI pieces
+  admin/DeleteButton.tsx        Two-step delete confirmation
   ui/Logo.tsx                   Inline SVG logo
 lib/
-  site-config.ts                Every business detail (email, phone, address)
+  site-config.ts                Business details (email, phone, address)
   survey.ts                     Survey questions, sections and validation (single source)
-  enquiry-schema.ts             Zod schema for the enquiry API
-  rate-limit.ts, email.ts, ...  Server helpers
+  survey-queries.ts             Admin filters
+  rate-limit.ts, ...            Server helpers
 prisma/
   schema.prisma                 Local schema (SQLite)
   migrations/                   SQLite migrations
   postgres/schema.prisma        Production schema (PostgreSQL)
   postgres/migrations/          PostgreSQL migrations
-  seed.ts                       Five sample enquiries
 scripts/prisma.mjs              Runs Prisma against the right schema (see below)
 middleware.ts                   Protects /admin/*
 ```
@@ -50,7 +47,6 @@ Requires Node 20.12 or newer.
 npm install
 cp .env.example .env     # then edit the values (on Windows: copy .env.example .env)
 npm run db:migrate       # creates prisma/dev.db and applies migrations
-npm run db:seed          # optional: 5 sample enquiries
 npm run dev              # http://localhost:3000
 ```
 
@@ -66,7 +62,7 @@ To replace an image, overwrite the file with the same name. If the dev server st
 
 ### Business details
 
-Edit `lib/site-config.ts`. Replace the values marked `TODO` (email, phone, address, response time). They flow into the form, the footer and the "What happens next" steps.
+Edit `lib/site-config.ts`. Replace the values marked `TODO` (email, phone, address). They appear in the footer and in the survey's error message.
 
 ## Environment variables
 
@@ -76,11 +72,6 @@ Edit `lib/site-config.ts`. Replace the values marked `TODO` (email, phone, addre
 | `ADMIN_PASSWORD` | yes | Password for `/admin/login` |
 | `SESSION_SECRET` | yes | Signs the admin session cookie. 32+ characters |
 | `IP_HASH_SALT` | yes | Salt for the SHA-256 IP hash. Raw IPs are never stored |
-| `EMAIL_ENABLED` | no | `true` to email each new enquiry. Default off |
-| `DARSHE_EMAIL` | if email on | Where notifications are delivered (falls back to `lib/site-config.ts`) |
-| `EMAIL_FROM` | if email on | Sender, e.g. `DarShe <enquiries@yourdomain.com>`. Must be verified with your provider |
-| `RESEND_API_KEY` | option A | Send via Resend |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | option B | Send via SMTP (Nodemailer); used when `RESEND_API_KEY` is empty |
 | `NEXT_PUBLIC_SITE_URL` | yes | Public URL, used for canonical and Open Graph URLs |
 
 Generate secrets with:
@@ -88,8 +79,6 @@ Generate secrets with:
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
-
-Email failures never block or fail an enquiry. The enquiry is saved first; errors are logged.
 
 ## Database and migrations
 
@@ -105,7 +94,6 @@ Prisma can't switch database provider from an environment variable, so the proje
 ```bash
 npm run db:migrate   # prisma migrate dev   (create/apply migrations while developing)
 npm run db:deploy    # prisma migrate deploy (apply existing migrations; use in production)
-npm run db:seed      # seed sample enquiries
 npm run db:studio    # browse data
 ```
 
@@ -117,6 +105,15 @@ npm run db:studio    # browse data
 
 `prisma migrate dev` is development-only. Production uses `migrate deploy`.
 
+### Leftover `Enquiry` table
+
+Enquiries were removed from the app. Databases created before that still contain an empty `Enquiry` table and an `EnquiryStatus` type. They are harmless and nothing reads them. To remove them, run this against the database yourself:
+
+```sql
+DROP TABLE "Enquiry";
+DROP TYPE "EnquiryStatus";   -- PostgreSQL only
+```
+
 ## Deploying to Vercel with Neon or Supabase
 
 1. **Create a PostgreSQL database.**
@@ -125,13 +122,11 @@ npm run db:studio    # browse data
 2. **Push the project to GitHub** and import it in Vercel.
 3. **Add environment variables** in Vercel → Settings → Environment Variables (Production): everything in the table above, with `DATABASE_URL` set to the PostgreSQL URL and `NEXT_PUBLIC_SITE_URL` set to your domain.
 4. **Deploy.** Vercel runs the `vercel-build` script, which generates the PostgreSQL client, applies pending migrations (`migrate deploy`) and builds the site.
-5. Visit `/admin/login` and confirm you can sign in, then complete a test survey on the live site and check it appears under **Survey** (delete it from the database afterwards if you don't want it in your results).
-6. Optional: run the seed against production only if you want sample data (`DATABASE_URL=… npm run db:seed`). The seed only removes and recreates rows whose email ends in `@example.com`.
+5. Visit `/admin/login` and confirm you can sign in, then complete a test survey on the live site and check it appears in the admin (delete it afterwards so it isn't in your results).
 
 ### Production notes
 
-- **Rate limiting** is in-memory (`lib/rate-limit.ts`): 5 enquiries and 10 survey submissions per IP per hour, and 10 login attempts per 15 minutes. On serverless each instance has its own counters, so treat this as a basic safety net. Swap in Upstash Redis for real protection; the file contains the replacement snippet and the call sites don't change.
-- **Email**: with Resend, verify your sending domain and set `EMAIL_FROM` to an address on it. The default `onboarding@resend.dev` only delivers to the account owner.
+- **Rate limiting** is in-memory (`lib/rate-limit.ts`): 10 survey submissions per IP per hour and 10 login attempts per 15 minutes. On serverless each instance has its own counters, so treat this as a basic safety net. Swap in Upstash Redis for real protection; the file contains the replacement snippet and the call sites don't change.
 - The admin session cookie is `httpOnly`, `sameSite=lax` and `secure` in production, valid for 8 hours.
 
 ## Changing the admin password
@@ -150,17 +145,17 @@ The survey lives at `/survey` (not indexed by search engines; share the link dir
 - **Steps:** one section per step, with a progress bar and per-step validation. Single-choice and multi-choice questions are required; "Select up to N" limits and exclusive options (such as "None of the above") are enforced. The contact section is optional, but consent (Q34) is required if an email address or WhatsApp number is given.
 - **Drafts:** an unfinished survey is kept in the respondent's browser (`localStorage`) so a refresh doesn't lose their answers. It is cleared on submit.
 - **Storage:** each response is one `SurveyResponse` row. `answers` holds every answer as JSON keyed by question id (`q1`…`q34`); first name, email, WhatsApp number and consent are also copied into their own columns. Raw IPs are never stored (SHA-256 hash only).
-- **Spam protection:** hidden honeypot field and an in-memory limit of 10 submissions per IP per hour.
-- **Admin → Survey:** newest first, 20 per page, a detail view with every answer by section, and **Export CSV** (one row per response, one column per question, multi-select answers joined with `;`).
+- **Spam protection:** hidden honeypot field and the rate limit above.
 
 To add or change a question, edit `lib/survey.ts`. Existing responses keep their stored answers; the CSV and detail view show an empty cell for questions a response doesn't have.
 
-## Admin features (Enquiries)
+## Admin
 
-- Newest first, 20 per page; search by name, email or phone; filter by status and occupation.
-- Times are shown in Dubai time (Asia/Dubai).
-- Detail view with `mailto:` and WhatsApp links, and a status dropdown (NEW → CONTACTED → CLOSED).
-- **Export CSV** exports everything matching the current search and filters.
+- **List:** newest first, 20 per page, times in Dubai time (Asia/Dubai).
+- **Search and filters:** search by first name, email or WhatsApp number; filter by age group, employment, "would consider DarShe", contact status (agreed / declined / no contact details) and received date range. Filters combine, and the URL keeps them so a filtered view can be bookmarked.
+- **Detail view:** every answer by section, with `mailto:` and WhatsApp links.
+- **Export CSV:** one row per response, one column per question, multi-select answers joined with `;`. It exports exactly what the current filters show.
+- **Delete:** each response has a **Delete** button in its list row and on its detail page. It asks "Delete permanently?" first (Cancel is focused by default; Escape cancels). Deletion can't be undone, so export a CSV first if you want a backup.
 - `/admin/*` is `noindex`, excluded in `robots.txt`, and sent with `X-Robots-Tag` and `no-store` headers.
 
 ## Scripts
