@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-cream font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-normal text-espresso;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8a3f20;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Dark / saturated sections need a light focus ring. */
+  .on-dark :focus-visible {
+    outline-color: #fffbf5;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8;
+  }
+
+  .section-y {
+    @apply py-20 sm:py-24 lg:py-28;
+  }
+
+  .eyebrow {
+    @apply mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-terracotta-dark;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[0.95rem] font-medium transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-primary {
+    @apply btn bg-terracotta text-card hover:bg-terracotta-dark;
+  }
+
+  .btn-outline {
+    @apply btn border border-terracotta text-terracotta-dark hover:bg-terracotta hover:text-card;
+  }
+
+  .btn-light {
+    @apply btn bg-card text-espresso hover:bg-cream;
+  }
+
+  /* Arch crop: semicircular top, small bottom radius. Pair with aspect-[4/5]. */
+  .arch {
+    @apply relative aspect-[4/5] overflow-hidden;
+    border-radius: 50% 50% 24px 24px / 40% 40% 24px 24px;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-espresso;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-input-border bg-white px-4 py-3 text-[0.95rem] text-ink placeholder:text-body-muted/70 transition-colors;
+  }
+
+  .field-input[aria-invalid="true"] {
+    @apply border-[#B3261E];
+  }
+
+  .field-error {
+    @apply mt-1.5 text-sm text-[#B3261E];
+  }
+}
+
+/* Visually hidden but available to assistive tech. */
+.sr-only-field {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

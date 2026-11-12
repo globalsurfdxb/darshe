@@ -1,0 +1,43 @@
+{
+  "name": "darshe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DarShe landing page and enquiry admin",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "node scripts/prisma.mjs generate",
+    "db:generate": "node scripts/prisma.mjs generate",
+    "db:migrate": "node scripts/prisma.mjs migrate dev",
+    "db:deploy": "node scripts/prisma.mjs migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "node scripts/prisma.mjs studio",
+    "vercel-build": "node scripts/prisma.mjs generate && node scripts/prisma.mjs migrate deploy && next build"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "jose": "^6.2.17",
+    "next": "^15.5.29",
+    "nodemailer": "^10.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,38 @@
+// LOCAL DEVELOPMENT schema (SQLite).
+// The production schema lives in prisma/postgres/schema.prisma and must be kept
+// identical apart from the datasource block. See README.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model Enquiry {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  fullName       String
+  occupation     String
+  email          String
+  phone          String
+  roomPreference String
+  moveInDate     DateTime
+  lengthOfStay   String
+  message        String?
+  consent        Boolean
+  status         EnquiryStatus @default(NEW)
+  source         String?
+  ipHash         String?
+
+  @@index([createdAt])
+  @@index([status])
+}
