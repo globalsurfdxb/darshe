@@ -11,7 +11,7 @@ export function Enquire() {
   return (
     <section id="enquire" className="scroll-mt-20 section-y">
       <div className="container-page grid items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-        <div>
+        <div data-reveal>
           <p className="eyebrow">Register your interest</p>
           <h2 className="text-4xl leading-tight sm:text-5xl">Let&apos;s find your place at DarShe.</h2>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-body-muted">

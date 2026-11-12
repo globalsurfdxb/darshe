@@ -79,7 +79,7 @@ export function Included() {
   return (
     <section id="included" className="on-dark scroll-mt-20 bg-terracotta section-y text-card">
       <div className="container-page">
-        <div className="mx-auto max-w-3xl text-center">
+        <div data-reveal className="mx-auto max-w-3xl text-center">
           <p className="eyebrow !text-card">All-inclusive living</p>
           <h2 className="!text-card text-4xl leading-tight sm:text-5xl">Curated comfort, taken care of.</h2>
           <p className="mt-6 text-lg leading-relaxed">
@@ -88,7 +88,7 @@ export function Included() {
           </p>
         </div>
 
-        <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul data-stagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {imageCards.map((c) => (
             <li key={c.title} className="overflow-hidden rounded-3xl bg-card text-ink">
               <div className="relative aspect-[4/3]">
@@ -108,7 +108,7 @@ export function Included() {
           ))}
         </ul>
 
-        <ul className="mt-6 grid gap-6 md:grid-cols-3">
+        <ul data-stagger className="mt-6 grid gap-6 md:grid-cols-3">
           {features.map((f) => (
             <li key={f.title} className="rounded-3xl border border-card/60 p-7">
               <span className="text-card">{f.icon}</span>

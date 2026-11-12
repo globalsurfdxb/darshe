@@ -4,7 +4,7 @@ export function Spaces() {
   return (
     <section id="spaces" className="scroll-mt-20 section-y">
       <div className="container-page">
-        <div className="mx-auto max-w-3xl text-center">
+        <div data-reveal className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">The spaces</p>
           <h2 className="text-4xl leading-tight sm:text-5xl">Rooms that feel like a deep breath.</h2>
           <p className="mt-6 text-lg leading-relaxed text-body-muted">
@@ -14,10 +14,11 @@ export function Spaces() {
           </p>
         </div>
 
-        <div className="mt-14 grid items-end gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <div data-stagger className="mt-14 grid items-end gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           <figure>
             <div className="arch">
               <Image
+                data-arch-img
                 src="/images/room-sage.jpg"
                 alt="Bright twin room with white bedding, sage throws and a jute rug"
                 fill
@@ -48,6 +49,7 @@ export function Spaces() {
           <figure className="sm:col-span-2 sm:mx-auto sm:w-1/2 lg:col-span-1 lg:mx-0 lg:w-auto">
             <div className="arch">
               <Image
+                data-arch-img
                 src="/images/room-cream.jpg"
                 alt="Cream room with arched headboards and soft brown cushions"
                 fill

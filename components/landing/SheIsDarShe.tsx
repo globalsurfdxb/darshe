@@ -11,7 +11,7 @@ export function SheIsDarShe() {
   return (
     <section id="she" className="scroll-mt-20 bg-blush section-y">
       <div className="container-page grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
-        <div>
+        <div data-reveal>
           <p className="eyebrow !text-espresso">Who it&apos;s for</p>
           <h2 className="text-4xl leading-tight sm:text-5xl lg:text-6xl">She is DarShe.</h2>
           <p className="mt-6 text-lg leading-relaxed text-body-muted">
@@ -43,6 +43,7 @@ export function SheIsDarShe() {
         <div className="mx-auto w-full max-w-[520px] lg:max-w-none">
           <div className="arch">
             <Image
+              data-arch-img
               src="/images/she-is-darshe.jpg"
               alt="Illustration of a diverse group of women standing close together"
               fill

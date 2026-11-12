@@ -19,7 +19,7 @@ const pillars = [
 export function Pillars() {
   return (
     <section aria-label="Purpose, promise and personality" className="on-dark bg-brown py-16 text-card sm:py-20">
-      <div className="container-page grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-14">
+      <div data-stagger className="container-page grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-14">
         {pillars.map((p) => (
           <div key={p.label} className="border-t border-card/30 pt-6">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-card/85">{p.label}</p>

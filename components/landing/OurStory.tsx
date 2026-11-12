@@ -2,7 +2,7 @@ export function OurStory() {
   return (
     <section id="story" className="on-dark scroll-mt-20 bg-olive section-y text-card">
       <div className="container-page">
-        <div className="mx-auto max-w-3xl text-center">
+        <div data-stagger className="mx-auto max-w-3xl text-center">
           <p className="eyebrow !text-card">Our story</p>
           <h2 className="!text-card text-4xl leading-tight sm:text-5xl">
             Feminine minimalism, where desert-inspired chic meets modern comfort.
