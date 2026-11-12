@@ -36,3 +36,20 @@ model Enquiry {
   @@index([createdAt])
   @@index([status])
 }
+
+/// One completed "Women's Housing Survey". `answers` holds every answer keyed by
+/// question id (q1..q34); the contact fields are copied out for easy querying.
+model SurveyResponse {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  answers        Json
+  firstName      String?
+  email          String?
+  whatsapp       String?
+  /// Answer to "may we contact you?": true = Yes, false = No, null = not asked.
+  contactConsent Boolean?
+  source         String?
+  ipHash         String?
+
+  @@index([createdAt])
+}

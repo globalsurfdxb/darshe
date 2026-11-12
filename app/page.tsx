@@ -1,5 +1,4 @@
 import { Animations } from "@/components/landing/Animations";
-import { Enquire } from "@/components/landing/Enquire";
 import { Footer } from "@/components/landing/Footer";
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
@@ -23,7 +22,6 @@ export default function HomePage() {
         <Spaces />
         <Included />
         <SheIsDarShe />
-        <Enquire />
       </main>
       <Footer />
       <Animations />

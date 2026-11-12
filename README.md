@@ -1,10 +1,11 @@
 # DarShe
 
-Landing page and enquiry admin for **DarShe**, a women-only co-living residence for working women in Dubai.
+Landing page, housing survey and admin for **DarShe**, a women-only co-living residence for working women in Dubai.
 
-- **Landing page** at `/`: single page, nine sections, enquiry form.
-- **API** at `POST /api/enquiries`: validates, rate-limits, saves, optionally emails the team.
-- **Admin** at `/admin/enquiries`: password-protected list, search, filters, status changes, CSV export.
+- **Landing page** at `/`: single page. Its "Register your interest" buttons link to the survey.
+- **Survey** at `/survey`: the 34-question Women's Housing Survey as a 7-step form (one section per step).
+- **API**: `POST /api/survey` saves survey responses; `POST /api/enquiries` saves simple enquiries (no form uses it at the moment).
+- **Admin** at `/admin`: password-protected. **Survey** tab: responses list, detail, CSV export. **Enquiries** tab: list, search, filters, status, CSV export.
 
 Stack: Next.js 15 (App Router) · TypeScript · Tailwind CSS 3 · Prisma 6 · Zod 4 · jose (session cookie) · SQLite locally, PostgreSQL in production.
 
@@ -15,16 +16,21 @@ app/
   page.tsx                      Landing page (composes the sections)
   layout.tsx                    Fonts, metadata, Open Graph
   icon.svg                      Favicon (arch logo)
+  survey/page.tsx               Survey page (/survey)
+  api/survey/route.ts           Survey endpoint
   api/enquiries/route.ts        Enquiry endpoint
   admin/login/                  Login page + server actions
-  admin/(panel)/enquiries/      List, detail ([id]), CSV export
+  admin/(panel)/survey/         Survey responses: list, detail ([id]), CSV export
+  admin/(panel)/enquiries/      Enquiries: list, detail ([id]), CSV export
 components/
   landing/                      One component per landing section
+  survey/SurveyForm.tsx         Multi-step survey form
   admin/                        Admin UI pieces
   ui/Logo.tsx                   Inline SVG logo
 lib/
-  site-config.ts                Every business detail (email, phone, address, response time)
-  enquiry-schema.ts             Zod schema shared by the form and the API
+  site-config.ts                Every business detail (email, phone, address)
+  survey.ts                     Survey questions, sections and validation (single source)
+  enquiry-schema.ts             Zod schema for the enquiry API
   rate-limit.ts, email.ts, ...  Server helpers
 prisma/
   schema.prisma                 Local schema (SQLite)
@@ -56,7 +62,7 @@ Place the brand photos in `public/images/` with exactly these names:
 
 `hero.jpg`, `room-sage.jpg`, `lounge.jpg`, `room-cream.jpg`, `meals.jpg`, `housekeeping.jpg`, `wellness.jpg`, `dining.jpg`, `she-is-darshe.jpg`
 
-The repository currently contains labelled **placeholder** images under those names so the layout renders. Overwrite them with the real photos. Review the `alt` text in `components/landing/*.tsx` against the real photos: it was written before the images were available.
+To replace an image, overwrite the file with the same name. If the dev server still shows the old one, delete `.next/cache/images`.
 
 ### Business details
 
@@ -119,12 +125,12 @@ npm run db:studio    # browse data
 2. **Push the project to GitHub** and import it in Vercel.
 3. **Add environment variables** in Vercel → Settings → Environment Variables (Production): everything in the table above, with `DATABASE_URL` set to the PostgreSQL URL and `NEXT_PUBLIC_SITE_URL` set to your domain.
 4. **Deploy.** Vercel runs the `vercel-build` script, which generates the PostgreSQL client, applies pending migrations (`migrate deploy`) and builds the site.
-5. Visit `/admin/login` and confirm you can sign in, then submit a test enquiry on the live site.
+5. Visit `/admin/login` and confirm you can sign in, then complete a test survey on the live site and check it appears under **Survey** (delete it from the database afterwards if you don't want it in your results).
 6. Optional: run the seed against production only if you want sample data (`DATABASE_URL=… npm run db:seed`). The seed only removes and recreates rows whose email ends in `@example.com`.
 
 ### Production notes
 
-- **Rate limiting** is in-memory (`lib/rate-limit.ts`): 5 enquiries per IP per hour, and 10 login attempts per 15 minutes. On serverless each instance has its own counters, so treat this as a basic safety net. Swap in Upstash Redis for real protection; the file contains the replacement snippet and the call sites don't change.
+- **Rate limiting** is in-memory (`lib/rate-limit.ts`): 5 enquiries and 10 survey submissions per IP per hour, and 10 login attempts per 15 minutes. On serverless each instance has its own counters, so treat this as a basic safety net. Swap in Upstash Redis for real protection; the file contains the replacement snippet and the call sites don't change.
 - **Email**: with Resend, verify your sending domain and set `EMAIL_FROM` to an address on it. The default `onboarding@resend.dev` only delivers to the account owner.
 - The admin session cookie is `httpOnly`, `sameSite=lax` and `secure` in production, valid for 8 hours.
 
@@ -136,7 +142,20 @@ The password is the `ADMIN_PASSWORD` environment variable. There is no user tabl
 - **Vercel:** change `ADMIN_PASSWORD` in Settings → Environment Variables, then **redeploy** so it takes effect.
 - To sign everyone out immediately (for example after a password leak), also change `SESSION_SECRET`: every existing session cookie becomes invalid.
 
-## Admin features
+## Survey
+
+The survey lives at `/survey` (not indexed by search engines; share the link directly).
+
+- **Questions** are defined once in `lib/survey.ts`: wording, options, selection limits and sections. The browser form, the API and the admin views all read from it, so editing a question there updates everywhere.
+- **Steps:** one section per step, with a progress bar and per-step validation. Single-choice and multi-choice questions are required; "Select up to N" limits and exclusive options (such as "None of the above") are enforced. The contact section is optional, but consent (Q34) is required if an email address or WhatsApp number is given.
+- **Drafts:** an unfinished survey is kept in the respondent's browser (`localStorage`) so a refresh doesn't lose their answers. It is cleared on submit.
+- **Storage:** each response is one `SurveyResponse` row. `answers` holds every answer as JSON keyed by question id (`q1`…`q34`); first name, email, WhatsApp number and consent are also copied into their own columns. Raw IPs are never stored (SHA-256 hash only).
+- **Spam protection:** hidden honeypot field and an in-memory limit of 10 submissions per IP per hour.
+- **Admin → Survey:** newest first, 20 per page, a detail view with every answer by section, and **Export CSV** (one row per response, one column per question, multi-select answers joined with `;`).
+
+To add or change a question, edit `lib/survey.ts`. Existing responses keep their stored answers; the CSV and detail view show an empty cell for questions a response doesn't have.
+
+## Admin features (Enquiries)
 
 - Newest first, 20 per page; search by name, email or phone; filter by status and occupation.
 - Times are shown in Dubai time (Asia/Dubai).

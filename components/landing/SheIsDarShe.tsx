@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const statements = [
   "She who wants safety, comfort and WiFi that never fails.",
@@ -35,9 +36,9 @@ export function SheIsDarShe() {
           <p className="mt-8 text-lg text-espresso">
             If this sounds like you, there&apos;s a place waiting for you here.
           </p>
-          <a href="#enquire" className="btn-primary mt-6">
-            Sound like you? Register your interest
-          </a>
+          <Link href="/survey" className="btn-primary mt-6">
+            Sound like you? Take the survey
+          </Link>
         </div>
 
         <div className="mx-auto w-full max-w-[520px] lg:max-w-none">

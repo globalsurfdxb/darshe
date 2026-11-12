@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { siteConfig } from "@/lib/site-config";
 
@@ -36,9 +37,9 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <a href="#enquire" className="underline underline-offset-4 hover:no-underline">
-                Register your interest
-              </a>
+              <Link href="/survey" className="underline underline-offset-4 hover:no-underline">
+                Take the survey
+              </Link>
             </li>
           </ul>
         </div>

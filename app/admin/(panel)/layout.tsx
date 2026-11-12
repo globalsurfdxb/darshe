@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { logout } from "@/app/admin/login/actions";
+import { AdminNav } from "@/components/admin/AdminNav";
 import { Logo } from "@/components/ui/Logo";
 import { requireAdmin } from "@/lib/admin-auth";
 
@@ -14,9 +15,9 @@ export default async function PanelLayout({ children }: { children: React.ReactN
             <Link href="/admin/enquiries" aria-label="DarShe admin home">
               <Logo markClassName="h-6 w-auto" textClassName="text-2xl" />
             </Link>
-            <span className="hidden border-l border-line pl-5 text-sm font-medium text-body-muted sm:inline">
-              Enquiries
-            </span>
+            <div className="border-l border-line pl-3 sm:pl-5">
+              <AdminNav />
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <Link

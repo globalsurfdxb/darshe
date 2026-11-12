@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -18,9 +19,9 @@ export function Hero() {
             community that truly gets you.
           </p>
           <div data-hero className="mt-8 flex flex-wrap gap-3">
-            <a href="#enquire" className="btn-primary">
+            <Link href="/survey" className="btn-primary">
               Find your place
-            </a>
+            </Link>
             <a href="#spaces" className="btn-outline">
               Explore the spaces
             </a>

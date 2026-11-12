@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/ui/Logo";
 
@@ -55,9 +56,9 @@ export function Header() {
           ))}
         </nav>
 
-        <a href="#enquire" className="btn-primary hidden !py-2.5 lg:inline-flex">
-          Register your interest
-        </a>
+        <Link href="/survey" className="btn-primary hidden !py-2.5 lg:inline-flex">
+          Take the survey
+        </Link>
 
         <button
           ref={buttonRef}
@@ -91,9 +92,9 @@ export function Header() {
               {l.label}
             </a>
           ))}
-          <a href="#enquire" onClick={() => setOpen(false)} className="btn-primary mt-5">
-            Register your interest
-          </a>
+          <Link href="/survey" onClick={() => setOpen(false)} className="btn-primary mt-5">
+            Take the survey
+          </Link>
         </nav>
       </div>
     </header>
