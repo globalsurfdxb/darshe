@@ -8,14 +8,11 @@ export const siteConfig = {
   name: "DarShe",
   tagline: "Her Home, Her Haven.",
 
-  // TODO: confirm the real public contact email (shown in the footer and on the survey error message).
-  email: "hello@darshe.ae",
+  // Public contact email (shown in the footer and on the survey error message).
+  email: "hello@darshe.org",
 
-  // TODO: confirm the real phone / WhatsApp number.
-  phone: "+971 4 000 0000",
-
-  // TODO: confirm the real street address. The footer renders "{address}, Dubai, UAE".
-  address: "Address to be confirmed",
+  // Location shown in the footer. Only the city and country are published, no street address.
+  location: "Dubai, UAE",
 
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 } as const;

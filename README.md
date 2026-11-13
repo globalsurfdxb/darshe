@@ -26,7 +26,7 @@ components/
   admin/DeleteButton.tsx        Two-step delete confirmation
   ui/Logo.tsx                   Inline SVG logo
 lib/
-  site-config.ts                Business details (email, phone, address)
+  site-config.ts                Business details (email, location)
   survey.ts                     Survey questions, sections and validation (single source)
   survey-queries.ts             Admin filters
   rate-limit.ts, ...            Server helpers
@@ -62,7 +62,7 @@ To replace an image, overwrite the file with the same name. If the dev server st
 
 ### Business details
 
-Edit `lib/site-config.ts`. Replace the values marked `TODO` (email, phone, address). They appear in the footer and in the survey's error message.
+Edit `lib/site-config.ts` for the contact email and location. They appear in the footer, and the email also appears in the survey's error message. No phone number is published; to add one later, add a `phone` value there and a list item in `components/landing/Footer.tsx`.
 
 ## Environment variables
 

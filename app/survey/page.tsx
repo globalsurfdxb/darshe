@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SurveyForm } from "@/components/survey/SurveyForm";
 import { Logo } from "@/components/ui/Logo";
-import { ALL_QUESTIONS, SURVEY_SECTIONS } from "@/lib/survey";
 
 export const metadata: Metadata = {
   title: "Women's Housing Survey | DarShe",
@@ -34,8 +33,6 @@ export default function SurveyPage() {
           <h1 className="text-4xl leading-tight sm:text-5xl">Help us shape DarShe.</h1>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-body-muted">
             Tell us how you live today and what you would want from a women-only residence in Dubai.
-            There are {ALL_QUESTIONS.length} questions across {SURVEY_SECTIONS.length} short sections.
-            Contact details at the end are optional.
           </p>
         </div>
 

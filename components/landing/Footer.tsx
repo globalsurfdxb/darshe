@@ -4,7 +4,6 @@ import { siteConfig } from "@/lib/site-config";
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const telHref = `tel:${siteConfig.phone.replace(/[^\d+]/g, "")}`;
 
   return (
     <footer className="on-dark bg-espresso text-card">
@@ -19,18 +18,13 @@ export function Footer() {
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.18em] !text-card/80 !font-sans">Visit</h2>
           <address className="mt-4 not-italic leading-relaxed text-card/90">
-            {siteConfig.address}, Dubai, UAE
+            {siteConfig.location}
           </address>
         </div>
 
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.18em] !text-card/80 !font-sans">Contact</h2>
           <ul className="mt-4 space-y-2 text-card/90">
-            <li>
-              <a href={telHref} className="underline-offset-4 hover:underline">
-                {siteConfig.phone}
-              </a>
-            </li>
             <li>
               <a href={`mailto:${siteConfig.email}`} className="underline-offset-4 hover:underline">
                 {siteConfig.email}
